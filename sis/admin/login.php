@@ -1,9 +1,7 @@
 <?php
 
-
 require "info.php";
 require "funcoes/func.php";
-
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -16,28 +14,20 @@ $password = clearPass($_POST["password"]);
 // echo $password;
 // echo "<br>";
 
-$conn = new PDO("mysql:dbname=".DBASE."; host=".HOST, USER, PASS);
-
-
-$stmt = $conn->prepare("SELECT * FROM ".TABLE_USER." WHERE senha = :PASSWORD AND email = :LOGIN ");
-
-
-$stmt->bindParam(":LOGIN", $login);
-$stmt->bindParam(":PASSWORD", $password);
-
-$stmt->execute(); 
+$stmt = select($login, $password);
 
 
 /* Return number of rows that were deleted */
 //print("Return number of rows that were deleted:\n");
-$count = $stmt->rowCount();
+//$count = $stmt->rowCount();
 //print("$count rows.\n");
 
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 /* verifica se teve acesso e se retornou 0 ou 1*/
 if($count <= 0 AND !$data){
 //echo $count." Result 0";
+$_SESSION["session_error"] = "Login or Password incorrect!";
 
 header("Location: ../../");
 exit();
@@ -56,7 +46,7 @@ exit();
 
 }else{
 
-header("Location: ../../");
+header("Location: ".LOCAL."/".PASTA."/");
 exit();
 
 }
